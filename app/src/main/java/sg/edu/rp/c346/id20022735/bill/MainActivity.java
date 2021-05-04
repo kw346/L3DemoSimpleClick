@@ -28,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
     String a = et$.getText().toString();
     double amt = Double.parseDouble(a);
 
+    String i = et$.getText().toString();
+    double indi = Double.parseDouble(a);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,37 +49,59 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-        tbser.setOnClickListener(new View.OnClickListener() {
+        tvsplit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (tbser.isChecked() == true) {
-                    amt = amt * 1.1;
+                if (et$.getText().toString().trim().length() != 0 && etNo.getText().toString().trim().length() != 0){
+                    double ori = Double.parseDouble(et$.getText().toString());
+                    double newtot = 0.0;
+                    if (!tbser.isChecked() && !tbgst.isChecked()){
+                        newtot = ori;
+                    } else if (!tbser.isChecked() && tbgst.isChecked()){
+                        newtot = ori * 1.07;
+                    }else if(tbser.isChecked() && !tbgst.isChecked()){
+                        newtot = ori* 1.1;
+                    }
+                    else {
+                        newtot = ori * 1.17;
+                    }
+                if (etDC.getText().toString().trim().length() != 0){
+                    newtot *= Double.parseDouble(etDC.getText().toString()) /100;
                 }
 
-        }});
+                String m = " in cash";
+                if (rgPay.getCheckedRadioButtonId() == R.id.radButP){
+                    m = " via Paynow to 91234578";
+                }
 
-        tbgst.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (tbgst.isChecked() == true) {
-                        amt = amt * 1.07;
-                    }
-            }});
+                tvbill.setText("Total Bill:$" + String.format(".%2f",newtot));
 
-        String b = etDC.getText().toString();
-        double dis = Double.parseDouble(b);
-            if (!(b.isEmpty())){
-                amt = amt * (dis /100);
+                int noppl = Integer.parseInt(etNo.getText().toString());
+                if (noppl != 1){
+                    tvsplit.setText("Each Pays: $" + String.format("%.2f",newtot / noppl) + m);
+                }
+                else{
+                    tvsplit.setText("Each Pays: $" + newtot + m);
+                }
+
+
+
+
+                }
+
             }
-        }
-        String c = etNo.getText().toString();
-        int ppl = Integer.parseInt(c);
-         if (c > 0){
-             amt = amt * (dis /100);
-    }
+        });
+        btnR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                et$.setText("");
+                etNo.setText("");
+                tbser.setChecked(false);
+                tbgst.setChecked(false);
+                etDC.setText("");
+                rgPay.check(R.id.radButC);
+            }
+        });
 
 
-    }
+    }}
